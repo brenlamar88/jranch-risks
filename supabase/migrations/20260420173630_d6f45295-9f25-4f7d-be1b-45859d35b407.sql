@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX IF NOT EXISTS risks_rap_number_unique_idx ON public.risks (rap_number);

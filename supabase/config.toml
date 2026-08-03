@@ -1,0 +1,6 @@
+# Set this to YOUR new Supabase project's reference ID (Project Settings -> General).
+# Left blank on purpose so this repo is not linked to the original freedomrap database.
+project_id = ""
+
+[functions.check-overdue-risks]
+verify_jwt = false

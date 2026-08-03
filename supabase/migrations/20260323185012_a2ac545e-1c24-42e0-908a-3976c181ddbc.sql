@@ -1,0 +1,1 @@
+INSERT INTO facility_access (parent_id, child_id) VALUES ('40ef8132-b9f6-4f88-ab5e-ac6e1bf6bc14', '72402282-b86c-497f-9e87-cbe75dfeccc1');

@@ -1,0 +1,1 @@
+ALTER TABLE public.risks DROP CONSTRAINT IF EXISTS risks_priority_level_check;

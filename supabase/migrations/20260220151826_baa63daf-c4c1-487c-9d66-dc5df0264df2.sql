@@ -1,0 +1,1 @@
+ALTER TABLE public.risks ADD COLUMN IF NOT EXISTS ongoing_risk boolean NOT NULL DEFAULT false;
