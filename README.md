@@ -42,14 +42,16 @@ npm install
 
 ## 3. Apply the database schema
 
-The `supabase/migrations/` folder defines the full schema (risks, profiles, facilities, roles, RLS policies, etc.). Apply it to your new, empty project:
+The `supabase/migrations/` folder defines the full schema (risks, profiles, facilities, roles, RLS policies, etc.). This creates all the tables with **no data** — a clean slate. Apply it in either way:
+
+**Option A — one paste (no CLI needed):** open your Supabase project → **SQL Editor** → New query, paste the contents of [`supabase/schema_bootstrap.sql`](supabase/schema_bootstrap.sql), and **Run**. That single file bundles every migration in order.
+
+**Option B — Supabase CLI:**
 
 ```bash
 supabase link --project-ref YOUR_PROJECT_REF
 supabase db push
 ```
-
-This creates all the tables with **no data** — a clean slate.
 
 ## 4. Deploy the edge functions (optional)
 
