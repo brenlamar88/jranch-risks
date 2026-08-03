@@ -6,10 +6,11 @@ STABLE
 SECURITY DEFINER
 SET search_path = public
 AS $$
-  SELECT _user_id IN (
-    '959f6dbd-f739-4f64-88c1-b60a6deee3fd'::uuid,
-    '0a3b32b0-c8c5-4998-aa13-e485f8bbc44f'::uuid
-  );
+  -- Clean slate: the original migration hardcoded two freedomrap user IDs as
+  -- executive viewers. Those users do not exist in this database, so no one is
+  -- seeded. Returns false for everyone until you designate your own executive
+  -- viewers, e.g. by replacing this with a lookup against user_roles.
+  SELECT false;
 $$;
 
 DROP POLICY IF EXISTS "Users can view facility or assigned risks" ON public.risks;

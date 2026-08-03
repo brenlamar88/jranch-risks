@@ -497,10 +497,11 @@ USING (is_admin(auth.uid()));
 -- ============================================================
 -- migration: 20260206162526_c9e55f25-0195-4c54-8f16-3f1ea43ee48a.sql
 -- ============================================================
--- Step 1: Assign all users without a facility to Lake Charles
-UPDATE public.users 
-SET company_id = 'e40784c0-1653-4d14-a6c3-455045a071c7'
-WHERE company_id IS NULL;
+-- Step 1: (clean slate) The original migration backfilled users with no facility
+-- to a specific Lake Charles company UUID from the freedomrap database. That ID
+-- does not exist here and there are no users yet, so this backfill is omitted.
+-- Original statement (kept for reference):
+-- UPDATE public.users SET company_id = 'e40784c0-1653-4d14-a6c3-455045a071c7' WHERE company_id IS NULL;
 
 -- Step 2: Create CORPORATE facility
 INSERT INTO public.companies (name) VALUES ('CORPORATE');
@@ -524,12 +525,13 @@ ON public.facility_access
 FOR SELECT
 USING (true);
 
--- Step 4: Insert hierarchy record (Corporate -> Lake Charles)
--- Corporate can access Lake Charles data
-INSERT INTO public.facility_access (parent_id, child_id)
-SELECT 
-  (SELECT id FROM public.companies WHERE name = 'CORPORATE'),
-  'e40784c0-1653-4d14-a6c3-455045a071c7';
+-- Step 4: (clean slate) The original migration seeded a Corporate -> Lake Charles
+-- hierarchy row using a company UUID specific to the freedomrap database. That ID
+-- does not exist in a fresh database, so the row is intentionally omitted here.
+-- Configure the facility hierarchy for your own companies after setup, e.g.:
+--   INSERT INTO public.facility_access (parent_id, child_id)
+--   SELECT (SELECT id FROM public.companies WHERE name = 'CORPORATE'),
+--          (SELECT id FROM public.companies WHERE name = 'YOUR FACILITY');
 
 -- Step 5: Create security definer function to check facility access
 CREATE OR REPLACE FUNCTION public.can_access_facility(_user_id uuid, _target_facility_id uuid)
@@ -666,7 +668,13 @@ USING (is_admin(auth.uid()));
 -- ============================================================
 -- migration: 20260323185012_a2ac545e-1c24-42e0-908a-3976c181ddbc.sql
 -- ============================================================
-INSERT INTO facility_access (parent_id, child_id) VALUES ('40ef8132-b9f6-4f88-ab5e-ac6e1bf6bc14', '72402282-b86c-497f-9e87-cbe75dfeccc1');
+-- Clean slate: original seeded a facility_access hierarchy row using company
+-- UUIDs specific to the freedomrap database. Those IDs do not exist in a fresh
+-- database, so the row is intentionally omitted. Configure facility hierarchy
+-- for your own companies after setup.
+-- Original statement (kept for reference):
+-- INSERT INTO facility_access (parent_id, child_id) VALUES ('40ef8132-b9f6-4f88-ab5e-ac6e1bf6bc14', '72402282-b86c-497f-9e87-cbe75dfeccc1');
+
 
 -- ============================================================
 -- migration: 20260323203705_4a888491-ea9f-44f3-9b48-9c4f64fcd20a.sql
@@ -747,10 +755,11 @@ STABLE
 SECURITY DEFINER
 SET search_path = public
 AS $$
-  SELECT _user_id IN (
-    '959f6dbd-f739-4f64-88c1-b60a6deee3fd'::uuid,
-    '0a3b32b0-c8c5-4998-aa13-e485f8bbc44f'::uuid
-  );
+  -- Clean slate: the original migration hardcoded two freedomrap user IDs as
+  -- executive viewers. Those users do not exist in this database, so no one is
+  -- seeded. Returns false for everyone until you designate your own executive
+  -- viewers, e.g. by replacing this with a lookup against user_roles.
+  SELECT false;
 $$;
 
 DROP POLICY IF EXISTS "Users can view facility or assigned risks" ON public.risks;

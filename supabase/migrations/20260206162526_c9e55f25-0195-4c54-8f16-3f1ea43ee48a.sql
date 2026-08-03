@@ -1,7 +1,8 @@
--- Step 1: Assign all users without a facility to Lake Charles
-UPDATE public.users 
-SET company_id = 'e40784c0-1653-4d14-a6c3-455045a071c7'
-WHERE company_id IS NULL;
+-- Step 1: (clean slate) The original migration backfilled users with no facility
+-- to a specific Lake Charles company UUID from the freedomrap database. That ID
+-- does not exist here and there are no users yet, so this backfill is omitted.
+-- Original statement (kept for reference):
+-- UPDATE public.users SET company_id = 'e40784c0-1653-4d14-a6c3-455045a071c7' WHERE company_id IS NULL;
 
 -- Step 2: Create CORPORATE facility
 INSERT INTO public.companies (name) VALUES ('CORPORATE');
@@ -25,12 +26,13 @@ ON public.facility_access
 FOR SELECT
 USING (true);
 
--- Step 4: Insert hierarchy record (Corporate -> Lake Charles)
--- Corporate can access Lake Charles data
-INSERT INTO public.facility_access (parent_id, child_id)
-SELECT 
-  (SELECT id FROM public.companies WHERE name = 'CORPORATE'),
-  'e40784c0-1653-4d14-a6c3-455045a071c7';
+-- Step 4: (clean slate) The original migration seeded a Corporate -> Lake Charles
+-- hierarchy row using a company UUID specific to the freedomrap database. That ID
+-- does not exist in a fresh database, so the row is intentionally omitted here.
+-- Configure the facility hierarchy for your own companies after setup, e.g.:
+--   INSERT INTO public.facility_access (parent_id, child_id)
+--   SELECT (SELECT id FROM public.companies WHERE name = 'CORPORATE'),
+--          (SELECT id FROM public.companies WHERE name = 'YOUR FACILITY');
 
 -- Step 5: Create security definer function to check facility access
 CREATE OR REPLACE FUNCTION public.can_access_facility(_user_id uuid, _target_facility_id uuid)
